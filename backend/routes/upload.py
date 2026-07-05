@@ -49,8 +49,9 @@ def upload_file():
         with open(file_path, 'wb') as f:
             f.write(file_data)
             
-        # The download URL will be a local endpoint
-        download_url = f"http://127.0.0.1:5000/api/upload/files/{unique_filename}"
+        # Build the download URL dynamically so it works locally AND in production
+        base_url = request.host_url.rstrip('/')
+        download_url = f"{base_url}/api/upload/files/{unique_filename}"
 
         # Save to Firestore
         db = firestore.client()

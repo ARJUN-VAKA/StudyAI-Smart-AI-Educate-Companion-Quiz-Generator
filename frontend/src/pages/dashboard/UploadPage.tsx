@@ -8,7 +8,7 @@ import { HiUpload, HiDocumentText, HiX, HiCheckCircle } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 
 const ACCEPTED = '.pdf,.docx,.txt';
-const MAX_SIZE_MB = 10;
+const MAX_SIZE_MB = 50;
 
 const UploadPage: React.FC = () => {
   const { user } = useAuthStore();
@@ -88,7 +88,16 @@ const UploadPage: React.FC = () => {
       setDone(true);
       toast.success('Material uploaded successfully!');
     } catch (err: unknown) {
-      toast.error((err as { message?: string })?.message || 'Upload failed.');
+      // Extract a readable message from Axios or generic errors
+      let msg = 'Upload failed. Please try again.';
+      if (err && typeof err === 'object') {
+        const axiosErr = err as { response?: { data?: { error?: string; message?: string } }; message?: string };
+        msg = axiosErr.response?.data?.error
+          || axiosErr.response?.data?.message
+          || axiosErr.message
+          || msg;
+      }
+      toast.error(msg);
     } finally {
       setUploading(false);
     }
