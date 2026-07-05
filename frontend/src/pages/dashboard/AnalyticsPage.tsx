@@ -40,12 +40,20 @@ const AnalyticsPage: React.FC = () => {
       try {
         const q = query(
           collection(db, 'quiz_results'),
-          where('userId', '==', user.uid),
-          orderBy('createdAt', 'asc')
+          where('userId', '==', user.uid)
         );
         const snap = await getDocs(q);
-        setResults(snap.docs.map(d => d.data() as QuizResult));
-      } catch { /* silent */ }
+        const fetchedResults = snap.docs.map(d => d.data() as QuizResult);
+        // Sort ascending by createdAt in JS to avoid Firestore composite index requirement
+        fetchedResults.sort((a, b) => {
+          const timeA = a.createdAt?.toDate?.()?.getTime?.() || 0;
+          const timeB = b.createdAt?.toDate?.()?.getTime?.() || 0;
+          return timeA - timeB;
+        });
+        setResults(fetchedResults);
+      } catch (err) { 
+        console.error('Failed to load analytics:', err);
+      }
       finally { setLoading(false); }
     };
     fetch();

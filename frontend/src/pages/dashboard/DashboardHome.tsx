@@ -67,13 +67,19 @@ const DashboardHome: React.FC = () => {
       try {
         const qq = query(
           collection(db, 'quiz_results'),
-          where('userId', '==', user.uid),
-          orderBy('createdAt', 'desc'),
-          limit(5)
+          where('userId', '==', user.uid)
         );
         const qs = await getDocs(qq);
-        setQuizResults(qs.docs.map(d => ({ id: d.id, ...d.data() } as QuizResult)));
-      } catch {
+        const results = qs.docs.map(d => ({ id: d.id, ...d.data() } as QuizResult));
+        // Sort descending by createdAt in JS to avoid Firestore composite index requirement
+        results.sort((a, b) => {
+          const timeA = a.createdAt?.toMillis?.() || 0;
+          const timeB = b.createdAt?.toMillis?.() || 0;
+          return timeB - timeA;
+        });
+        setQuizResults(results.slice(0, 5));
+      } catch (err) {
+        console.error('Failed to load quiz results:', err);
         setQuizResults([]);
       }
 
