@@ -88,15 +88,8 @@ const UploadPage: React.FC = () => {
       setDone(true);
       toast.success('Material uploaded successfully!');
     } catch (err: unknown) {
-      // Extract a readable message from Axios or generic errors
-      let msg = 'Upload failed. Please try again.';
-      if (err && typeof err === 'object') {
-        const axiosErr = err as { response?: { data?: { error?: string; message?: string } }; message?: string };
-        msg = axiosErr.response?.data?.error
-          || axiosErr.response?.data?.message
-          || axiosErr.message
-          || msg;
-      }
+      // The api interceptor already converts errors to plain Error objects with a .message string
+      const msg = err instanceof Error ? err.message : 'Upload failed. Please try again.';
       toast.error(msg);
     } finally {
       setUploading(false);
