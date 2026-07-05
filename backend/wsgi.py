@@ -9,8 +9,13 @@ def create_app():
     app.config.from_object(Config)
     app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max upload
     
-    # Enable CORS for frontend requests — allow Vercel and localhost
-    CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+    # Enable CORS — allow all origins (works with Authorization header auth)
+    # NOTE: supports_credentials=True cannot be used with origins='*' (browser rejects it)
+    CORS(app,
+         origins="*",
+         allow_headers=["Content-Type", "Authorization"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+         max_age=3600)
     
     # Initialize Firebase Admin using env variables
     try:
