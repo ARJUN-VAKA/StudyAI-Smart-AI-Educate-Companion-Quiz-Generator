@@ -10,8 +10,8 @@ from config import Config
 # Initialize Groq client
 groq_client = Groq(api_key=Config.GROQ_API_KEY) if Config.GROQ_API_KEY else None
 
-MODEL = "gemma2-9b-it"
-MAX_CHARS = 10000  # ~2500 tokens; keeps total request under the 15k TPM free-tier limit
+MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
+MAX_CHARS = 6000  # ~1500 tokens; keeps total request under 6k TPM free-tier limit
 
 def extract_text_from_url(url, file_type):
     """Downloads a file from a URL and extracts its text based on file_type."""
