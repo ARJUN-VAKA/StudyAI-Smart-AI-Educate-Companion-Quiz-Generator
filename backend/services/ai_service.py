@@ -10,7 +10,7 @@ from config import Config
 # Initialize Groq client
 groq_client = Groq(api_key=Config.GROQ_API_KEY) if Config.GROQ_API_KEY else None
 
-MODEL = "llama-3.3-70b-versatile"
+MODEL = "llama-3.1-8b-instant"
 
 def extract_text_from_url(url, file_type):
     """Downloads a file from a URL and extracts its text based on file_type."""
