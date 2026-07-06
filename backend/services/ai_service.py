@@ -15,10 +15,18 @@ MODEL = "llama-3.1-8b-instant"
 def extract_text_from_url(url, file_type):
     """Downloads a file from a URL and extracts its text based on file_type."""
     try:
-        response = requests.get(url, timeout=30)
-        response.raise_for_status()
+        content = None
+        if "/api/upload/files/" in url:
+            filename = url.split("/api/upload/files/")[-1]
+            upload_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
+            file_path = os.path.join(upload_folder, filename)
+            with open(file_path, 'rb') as f:
+                content = f.read()
+        else:
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            content = response.content
         
-        content = response.content
         text = ""
         
         if file_type == "pdf":
