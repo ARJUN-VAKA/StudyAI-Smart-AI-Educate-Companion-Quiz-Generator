@@ -10,7 +10,8 @@ from config import Config
 # Initialize Groq client
 groq_client = Groq(api_key=Config.GROQ_API_KEY) if Config.GROQ_API_KEY else None
 
-MODEL = "llama-3.1-8b-instant"
+MODEL = "gemma2-9b-it"
+MAX_CHARS = 10000  # ~2500 tokens; keeps total request under the 15k TPM free-tier limit
 
 def extract_text_from_url(url, file_type):
     """Downloads a file from a URL and extracts its text based on file_type."""
@@ -71,7 +72,7 @@ Break down the main topics into subheadings (###) and explain them simply. Use a
 - **Term 1**: Simple definition.
 
 MATERIAL:
-{text[:20000]}
+{text[:MAX_CHARS]}
 """
     try:
         completion = groq_client.chat.completions.create(
@@ -105,7 +106,7 @@ Output STRICTLY in JSON format as an array of objects with the following schema:
 DO NOT output any markdown blocks (like ```json), just raw valid JSON.
 
 MATERIAL:
-{text[:20000]}
+{text[:MAX_CHARS]}
 """
     try:
         completion = groq_client.chat.completions.create(
@@ -167,7 +168,7 @@ For short_answer:
 DO NOT output any markdown blocks (like ```json), just raw valid JSON.
 
 MATERIAL:
-{text[:20000]}
+{text[:MAX_CHARS]}
 """
     try:
         completion = groq_client.chat.completions.create(
@@ -229,7 +230,7 @@ Create 7 days.
 DO NOT output any markdown blocks (like ```json), just raw valid JSON.
 
 MATERIAL:
-{text[:20000]}
+{text[:MAX_CHARS]}
 """
     try:
         completion = groq_client.chat.completions.create(
