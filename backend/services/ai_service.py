@@ -10,7 +10,7 @@ from config import Config
 # Initialize Groq client
 groq_client = Groq(api_key=Config.GROQ_API_KEY) if Config.GROQ_API_KEY else None
 
-MODEL = "llama-3.1-8b-instant"
+MODEL = "qwen/qwen3.8-27b"
 MAX_CHARS = 8000  # ~2000 tokens; keeps total request well within free-tier limits
 
 def extract_text_from_url(url, file_type):
