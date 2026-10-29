@@ -17,14 +17,23 @@ def extract_text_from_url(url, file_type):
     """Downloads a file from a URL and extracts its text based on file_type."""
     try:
         content = None
+        upload_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
+
         if "/api/upload/files/" in url:
+            # Always resolve from local disk — works whether the URL was created
+            # on localhost, Render, or any other host, as long as the file exists here.
             filename = url.split("/api/upload/files/")[-1]
-            upload_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
             file_path = os.path.join(upload_folder, filename)
-            with open(file_path, 'rb') as f:
-                content = f.read()
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as f:
+                    content = f.read()
+            else:
+                # Fallback: try downloading from the URL directly (e.g. Render serving its own files)
+                response = requests.get(url, timeout=60)
+                response.raise_for_status()
+                content = response.content
         else:
-            response = requests.get(url, timeout=30)
+            response = requests.get(url, timeout=60)
             response.raise_for_status()
             content = response.content
         
